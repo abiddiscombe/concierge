@@ -1,6 +1,6 @@
 # docker build . -t abiddiscombe/concierge:semVer
 
-FROM golang:latest
+FROM --platform=linux/amd64 golang:alpine
 
 # Set destination for COPY
 WORKDIR /app
