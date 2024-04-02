@@ -78,16 +78,12 @@ func LinkPost(c echo.Context) error {
 		}
 	}
 
-	firstCharacter := url[0:1]
-
-	if firstCharacter == "/" {
+	if url[0:1] == "/" {
 		return c.JSON(http.StatusBadRequest, LinkResponse{
 			Title:   "[Concierge] Alias Creation",
 			Message: "Error. The 'url' must start with a fully-qualified domain name.",
 		})
 	}
-
-	fmt.Println(firstCharacter)
 
 	_, createdAt, err := database.LinkWrite(url, alias)
 
