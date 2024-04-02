@@ -70,7 +70,7 @@ func LinkPost(c echo.Context) error {
 
 	for _, value := range PROTOCOLS {
 		index := strings.Contains(url, value)
-		if index == true {
+		if index {
 			return c.JSON(http.StatusBadRequest, LinkResponse{
 				Title:   "[Concierge] Alias Creation",
 				Message: "Error. The 'url' must not include a protocol (e.g. 'https://').",
