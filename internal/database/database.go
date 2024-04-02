@@ -35,7 +35,7 @@ func Init() {
 	dbName := parseEnv("CONCIERGE_PG_NAME")
 	dbPort := parseEnv("CONCIERGE_PG_PORT")
 
-	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/London", dbHost, dbUser, dbPass, dbName, dbPort)
+	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=prefer TimeZone=Europe/London", dbHost, dbUser, dbPass, dbName, dbPort)
 	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 
 	if err != nil {
