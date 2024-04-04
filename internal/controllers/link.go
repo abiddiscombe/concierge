@@ -23,12 +23,12 @@ type LinkResponseMetadata struct {
 }
 
 func LinkGet(c echo.Context) error {
-	alias := c.QueryParam("alias")
+	alias := c.Param("alias")
 
 	if alias == "" {
 		return c.JSON(http.StatusBadRequest, LinkResponse{
 			Title:   "[Concierge] Alias Lookup",
-			Message: "Error. An 'alias' value must be provided.",
+			Message: "Error. An 'alias' URL parameter must be provided.",
 		})
 	}
 
@@ -55,14 +55,13 @@ func LinkGet(c echo.Context) error {
 }
 
 func LinkPost(c echo.Context) error {
-
 	url := c.QueryParam("url")
-	alias := c.QueryParam("alias")
+	alias := c.Param("alias")
 
 	if url == "" || alias == "" {
 		return c.JSON(http.StatusBadRequest, LinkResponse{
 			Title:   "[Concierge] Alias Creation",
-			Message: "Error. Both 'url' and 'alias' values must be provided.",
+			Message: "Error. Both 'url' and 'alias' parameters must be provided.",
 		})
 	}
 
@@ -90,7 +89,7 @@ func LinkPost(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, LinkResponse{
 			Title:   "[Concierge] Alias Creation",
-			Message: "Error. The provided 'alias' already exists.",
+			Message: "Error. The specified 'alias' already exists.",
 		})
 	}
 
