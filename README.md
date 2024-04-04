@@ -13,6 +13,12 @@ Concierge (_"[one who keeps the entrance to an edifice](https://www.wordnik.com/
 - `GET` \
 Returns documentation about the API and its endpoints.
 
+### `/to/:alias` - Link Redirection
+
+- `GET` - Requires an `alias` URL parameter. \
+**Share links to this endpoint with your target audience.** \
+Returns a redirection `HTTP 301` response to the corresponding URL of the supplied alias. All redirections are prefixed with `https://` automatically for security reasons.
+
 ### `/link/:alias` - Link Management
 
 - `GET` - Requires an `alias` URL parameter. \
@@ -20,12 +26,6 @@ Returns metadata about an existing entry matching the alias, its creation date, 
 
 - `POST` - Requires an `alias` URL parameter and a `url` query parameter. \
 If the `alias` is vacant, a new unique record will be created for the provided `url`.
-
-### `/to/:alias` - Link Redirection
-
-- `GET` - Requires an `alias` URL parameter. \
-**Share links to this endpoint with your target audience.** \
-Returns a redirection `HTTP 301` response to the corresponding URL of the supplied alias. All redirections are prefixed with `https://` automatically for security reasons.
 
 ## Deployment Instructions
 
