@@ -6,25 +6,25 @@ _A tiny URL shortener written in Go._
 
 Concierge (_[one who keeps the entrance to an edifice](https://www.wordnik.com/words/concierge)_) is a JSON-based REST API that takes a valid alias and returns the corresponding URL via a `HTTP 301` redirect. There's also a management endpoint to create (or preview existing) records. **Once records have been created, they cannot be removed or modified via the API.**
 
-## API Endpoints
+## API Specification
 
 ### `/` - Root
 
 - `GET` \
 Returns documentation about the API and its listed endpoints.
 
-### `/link` - Link Management
+### `/link/:alias` - Link Management
 
-- `GET` - Requires a valid `alias` query-parameter. \
-Returns metadata about an existing alias entry, creation date, and the corresponding URL.
+- `GET` - Requires an `alias` URL param. \
+Returns metadata about an existing entry matching the alias, its creation date, and the corresponding URL.
 
-- `POST` - Requires valid `alias` and `url` query-parameters. \
+- `POST` - Requires an `alias` URL param and a `url` query param. \
 If the `alias` is vacant, the API will confirm creation of the new record. Returns an error message if the `alias` is occupied.
 
 ### `/to/:alias` - Link Redirection
 
-- `GET` - Requires a valid `alias` url-parameter. \
-Returns a redirection (`HTTP 301`) response to the corresponding URL via HTTPS.
+- `GET` - Requires an `alias` URL param. \
+**Share links to this endpoint with your target audience.** Returns a redirection (`HTTP 301`) response to the corresponding URL of the supplied alias. All redirection URLs are prefixed with `https://` automatically.
 
 ## Deployment Instructions
 
