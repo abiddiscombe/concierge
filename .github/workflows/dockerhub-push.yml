@@ -21,6 +21,9 @@ jobs:
         with:
           prefix: v
 
+      - name: "Declare Image Tag"
+        run: echo "abiddiscombe/concierge:${steps.currentSemVer.outputs.tag}-test" >> $DOCKER_TAG
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -37,4 +40,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: abiddiscombe/concierge:{{ currentSemVer.outputs.tag }}-test
+          tags: ${{ env.DOCKER_TAG }}
