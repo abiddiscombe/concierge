@@ -5,6 +5,9 @@ on:
       - "main"
       - "6-Create-Docker-Automations"
 
+env:
+  DOCKER_TAG: ""
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -22,7 +25,7 @@ jobs:
           prefix: v
 
       - name: "Declare Image Tag"
-        run: echo "abiddiscombe/concierge:${steps.currentSemVer.outputs.tag}-test" >> $DOCKER_TAG
+        run: echo "abiddiscombe/concierge:${{ steps.currentSemVer.outputs.tag }}-test" >> $DOCKER_TAG
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
