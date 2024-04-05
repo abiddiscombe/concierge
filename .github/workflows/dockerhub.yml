@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - "main"
-      - "6-Create-Docker-Automations"
 
 env:
   REPO_TAG: ""
@@ -33,7 +32,7 @@ jobs:
         run: echo "REPO_TAG=${REPO_TAG#?}" >> $GITHUB_ENV
 
       - name: Store image tag to DOCKER_IMAGE_TAG
-        run: echo "DOCKER_IMAGE_TAG=${{ env.REPO_NAME }}:${{ env.REPO_TAG }}-test" >> $GITHUB_ENV
+        run: echo "DOCKER_IMAGE_TAG=${{ env.REPO_NAME }}:${{ env.REPO_TAG }}" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
