@@ -6,27 +6,34 @@ on:
       - "6-Create-Docker-Automations"
 
 env:
-  DOCKER_TAG: ""
-  DOCKER_REPO: "abiddiscombe/concierge"
+  REPO_TAG: ""
+  REPO_NAME: "abiddiscombe/concierge"
+  DOCKER_IMAGE_TAG: ""
 
 jobs:
   DockerBuildAndPush:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: "Get Latest SemVer Tag"
+      - name: "Fetch latest SemVer tag"
         id: currentSemVer
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         with:
           prefix: v
+        
+      - name: Store fetched SemVer tag to REPO_TAG
+        run: echo "REPO_TAG=${{ steps.currentSemVer.outputs.tag }}" >> $GITHUB_ENV
 
-      - name: "Specify Image Tag"
-        run: echo "DOCKER_TAG=${{ env.DOCKER_REPO }}:${{ steps.currentSemVer.outputs.tag }}-test" >> $GITHUB_ENV
+      - name: Amend REPO_TAG to remove "v" (first char)
+        run: echo "${MY_VARIABLE:1}"
+
+      - name: Store image tag to DOCKER_IMAGE_TAG
+        run: echo "DOCKER_IMAGE_TAG=${{ env.REPO_NAME }}:${{ env.REPO_TAG }}-test" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -41,4 +48,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ env.DOCKER_TAG }}
+          tags: ${{ env.DOCKER_IMAGE_TAG }}
