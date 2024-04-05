@@ -30,7 +30,7 @@ jobs:
         run: echo "REPO_TAG=${{ steps.currentSemVer.outputs.tag }}" >> $GITHUB_ENV
 
       - name: Amend REPO_TAG to remove "v" (the first char)
-        run: echo "${REPO_TAG#?}" >> $GITHUB_ENV
+        run: echo "REPO_TAG=${REPO_TAG#?}" >> $GITHUB_ENV
 
       - name: Store image tag to DOCKER_IMAGE_TAG
         run: echo "DOCKER_IMAGE_TAG=${{ env.REPO_NAME }}:${{ env.REPO_TAG }}-test" >> $GITHUB_ENV
