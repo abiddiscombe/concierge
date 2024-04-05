@@ -1,4 +1,4 @@
-name: dockerhub-push
+name: dockerhub
 on:
   push:
     branches:
@@ -7,9 +7,10 @@ on:
 
 env:
   DOCKER_TAG: ""
+  DOCKER_REPO: "abiddiscombe/concierge"
 
 jobs:
-  docker:
+  DockerBuildAndPush:
     runs-on: ubuntu-latest
     steps:
 
@@ -24,11 +25,8 @@ jobs:
         with:
           prefix: v
 
-      - name: "Declare Image Tag"
-        run: echo "abiddiscombe/concierge:${{ steps.currentSemVer.outputs.tag }}-test" >> $DOCKER_TAG
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - name: "Specify Image Tag"
+        run: echo "DOCKER_TAG=${{ env.DOCKER_REPO }}:${{ steps.currentSemVer.outputs.tag }}-test" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
