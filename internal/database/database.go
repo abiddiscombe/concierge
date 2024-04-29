@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/abiddiscombe/concierge/internal/log"
+	slogGorm "github.com/alfonmga/slog-gorm"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,23 +30,37 @@ func parseEnv(key string) string {
 }
 
 func Init() {
-
 	dbHost := parseEnv("CONCIERGE_PG_HOST")
 	dbUser := parseEnv("CONCIERGE_PG_USER")
 	dbPass := parseEnv("CONCIERGE_PG_PASS")
 	dbName := parseEnv("CONCIERGE_PG_NAME")
 	dbPort := parseEnv("CONCIERGE_PG_PORT")
 
+	logger := log.NewLogger("database")
+
+	DBLogger := slogGorm.New(
+		slogGorm.WithLogger(logger),
+	)
+
 	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=prefer TimeZone=Europe/London", dbHost, dbUser, dbPass, dbName, dbPort)
-	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{
+		Logger: DBLogger,
+	})
 
 	if err != nil {
-		panic("Failed to connect to PostgreSQL (via GORM).")
+		msg := "failed to connect to (PostgreSQL) database"
+		logger.Error(msg)
+		panic(msg)
 	}
 
-	db.AutoMigrate(&UriLinkEntry{})
+	err = db.AutoMigrate(&UriLinkEntry{})
 
-	fmt.Println("[Concierge] Connected to PostgreSQL.")
+	if err != nil {
+		msg := "failed to sync models with (PostgreSQL) database"
+		logger.Error(msg)
+		panic(msg)
+	}
 
+	logger.Info("connected to (PostreSQL) database")
 	DB = db
 }

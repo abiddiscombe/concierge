@@ -3,6 +3,7 @@ module github.com/abiddiscombe/concierge
 go 1.22.1
 
 require (
+	github.com/alfonmga/slog-gorm v0.0.0-20230918104600-53fa2b611c42
 	github.com/labstack/echo/v4 v4.11.4
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.9
