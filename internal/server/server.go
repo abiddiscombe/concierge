@@ -15,28 +15,33 @@ func Init() {
 	logger := log.NewLogger("server")
 
 	server := echo.New()
+	server.HidePort = true
 	server.HideBanner = true
 
 	server.Pre(middleware.RemoveTrailingSlash())
 	server.Use(middleware.Recover())
 	server.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogStatus:   true,
+		LogMethod:   true,
 		LogURI:      true,
 		LogError:    true,
 		HandleError: true,
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			var logLevel slog.Level
 			if v.Error == nil {
-				logger.LogAttrs(context.Background(), slog.LevelInfo, "REQUEST",
-					slog.String("uri", v.URI),
-					slog.Int("status", v.Status),
-				)
+				logLevel = slog.LevelInfo
+			} else if v.Status >= 400 && v.Status <= 499 {
+				logLevel = slog.LevelWarn
 			} else {
-				logger.LogAttrs(context.Background(), slog.LevelError, "REQUEST_ERROR",
-					slog.String("uri", v.URI),
-					slog.Int("status", v.Status),
-					slog.String("err", v.Error.Error()),
-				)
+				logLevel = slog.LevelError
 			}
+
+			logger.LogAttrs(context.Background(), logLevel, "New HTTP Event",
+				slog.Int("status", v.Status),
+				slog.String("method", v.Method),
+				slog.String("uri", v.URI),
+			)
+
 			return nil
 		},
 	}))
@@ -52,6 +57,6 @@ func Init() {
 	server.POST("/link/:alias", controllers.LinkPost)
 
 	if err := server.Start(":3000"); err != http.ErrServerClosed {
-		logger.Error("server unexpectedly closed")
+		logger.Error("Server closed unexpectedly", "err", err)
 	}
 }

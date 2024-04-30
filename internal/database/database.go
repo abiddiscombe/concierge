@@ -48,7 +48,7 @@ func Init() {
 	})
 
 	if err != nil {
-		msg := "failed to connect to (PostgreSQL) database"
+		msg := "Failed to connect to PostgreSQL"
 		logger.Error(msg)
 		panic(msg)
 	}
@@ -56,11 +56,11 @@ func Init() {
 	err = db.AutoMigrate(&UriLinkEntry{})
 
 	if err != nil {
-		msg := "failed to sync models with (PostgreSQL) database"
+		msg := "Failed to sync models with PostgreSQL"
 		logger.Error(msg)
 		panic(msg)
 	}
 
-	logger.Info("connected to (PostreSQL) database")
+	logger.Info("Connected to PostgreSQL")
 	DB = db
 }

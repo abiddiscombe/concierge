@@ -44,4 +44,4 @@ The API server is backed by PostgreSQL; the following environment variables are 
 
 ### Logging
 
-Concierge uses the `log/slog` package to print JSON-formatted logs. These can be captured and ingested by a supported `syslog` service.
+Concierge uses the `log/slog` package to print structured logs. These can be captured and ingested by a supported third-party `syslog` service.
