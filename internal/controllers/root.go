@@ -27,14 +27,14 @@ func RootGet(c echo.Context) error {
 				Summary: "[GET] Returns information about this API.",
 			},
 			{
-				Href:    "/link",
-				Title:   "Link & Alias Management",
-				Summary: "[GET, POST] Lookup or create new aliases.",
+				Href:    "/to/:alias",
+				Title:   "Link Redirection",
+				Summary: "[GET] Accepts a valid alias and redirects to target URL",
 			},
 			{
-				Href:    "/to/:alias",
-				Title:   "Link Activation & Redirection",
-				Summary: "[GET] Accepts a valid alias and redirects to target URL",
+				Href:    "/link/:alias",
+				Title:   "Link & Alias Management",
+				Summary: "[GET, POST] Lookup existing or create new aliases.",
 			},
 		},
 	})

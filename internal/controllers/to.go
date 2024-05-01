@@ -17,18 +17,25 @@ func ToGet(c echo.Context) error {
 	alias := c.Param("alias")
 
 	if alias == "" {
-		return c.JSON(http.StatusNotFound, ToGetResponse{
-			Title:   "[Concierge] Alias Missing.",
+		return echo.NewHTTPError(http.StatusNotFound, ToGetResponse{
+			Title:   "[Concierge] Alias Redirection.",
 			Message: "An '/alias' value must be provided.",
 		})
 	}
 
 	url, _, err := database.LinkRead(alias)
 
-	if url == "" || err != nil {
-		return c.JSON(http.StatusNotFound, ToGetResponse{
-			Title:   "[Concierge] Alias Invalid.",
-			Message: "The '/alias' provided is not valid.",
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, ToGetResponse{
+			Title:   "[Concierge] Alias Redirection.",
+			Message: "Internal Server Error",
+		})
+	}
+
+	if url == "" {
+		return echo.NewHTTPError(http.StatusNotFound, ToGetResponse{
+			Title:   "[Concierge] Alias Redirection.",
+			Message: "The provided 'alias' is not valid.",
 		})
 	}
 
