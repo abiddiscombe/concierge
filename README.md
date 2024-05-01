@@ -31,16 +31,15 @@ If the `alias` is vacant, a new unique record will be created for the provided `
 
 ### Setup
 
-Concierge can be run as a Docker container and uses internal port `:3000`. \
-The latest release image of [abiddiscombe/concierge](https://hub.docker.com/repository/docker/abiddiscombe/concierge/general) can be pulled from Docker Hub.
+Concierge can be run as a Docker container and uses port `3000`. The latest release image of [abiddiscombe/concierge](https://hub.docker.com/repository/docker/abiddiscombe/concierge/general) can be pulled from Docker Hub.
 
-The API server is backed by PostgreSQL; the following environment variables are required:
+Concierge uses PostgreSQL to persist data. The following environment variables are required to connect to a PostgreSQL server:
 
-- `CONCIERGE_PG_HOST` - PostgreSQL Server URL
-- `CONCIERGE_PG_PORT` - PostgreSQL Server Port
-- `CONCIERGE_PG_NAME` - PostgreSQL Database Name
-- `CONCIERGE_PG_USER` - PostgreSQL Connection User
-- `CONCIERGE_PG_PASS` - PostgreSQL Connection Password
+- `CONCIERGE_PG_HOST` - DB URL
+- `CONCIERGE_PG_PORT` - DB Port
+- `CONCIERGE_PG_NAME` - DB Name
+- `CONCIERGE_PG_USER` - DB User
+- `CONCIERGE_PG_PASS` - DB Password
 
 ### Logging
 
