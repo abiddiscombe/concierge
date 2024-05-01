@@ -36,7 +36,7 @@ func Init() {
 				logLevel = slog.LevelError
 			}
 
-			logger.LogAttrs(context.Background(), logLevel, "New HTTP Event",
+			logger.LogAttrs(context.Background(), logLevel, "HTTP Event",
 				slog.Int("status", v.Status),
 				slog.String("method", v.Method),
 				slog.String("uri", v.URI),
