@@ -13,9 +13,17 @@ import (
 var DB *gorm.DB
 
 type UriLinkEntry struct {
-	Url       string
-	Alias     string `gorm:"uniqueIndex"`
-	CreatedAt int64
+	gorm.Model
+	Url                 string
+	Alias               string `gorm:"uniqueIndex"`
+	CreatedAt           int64
+	UriActivationEvents []UriActivationEvent
+}
+
+type UriActivationEvent struct {
+	gorm.Model
+	UriLinkEntryId uint
+	IsRedirect     bool
 }
 
 func parseEnv(key string) string {
@@ -53,7 +61,7 @@ func Init() {
 		panic(msg)
 	}
 
-	err = db.AutoMigrate(&UriLinkEntry{})
+	err = db.AutoMigrate(&UriLinkEntry{}, &UriActivationEvent{})
 
 	if err != nil {
 		msg := "Failed to sync models with PostgreSQL"

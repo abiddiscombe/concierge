@@ -23,7 +23,7 @@ func ToGet(c echo.Context) error {
 		})
 	}
 
-	url, _, err := database.LinkRead(alias)
+	url, err := database.LinkReadUri(alias)
 
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, ToGetResponse{

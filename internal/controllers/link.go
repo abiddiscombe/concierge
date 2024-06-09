@@ -16,10 +16,16 @@ type LinkResponse struct {
 }
 
 type LinkResponseMetadata struct {
-	URL       string `json:"url"`
-	Link      string `json:"link"`
-	Alias     string `json:"alias"`
-	CreatedAt string `json:"createdAt"`
+	URL         string                  `json:"url"`
+	Link        string                  `json:"link"`
+	Alias       string                  `json:"alias"`
+	CreatedAt   string                  `json:"createdAt"`
+	Activations LinkResponseActivations `json:"activations"`
+}
+
+type LinkResponseActivations struct {
+	Lookups   int64 `json:"lookups"`
+	Redirects int64 `json:"redirects"`
 }
 
 func LinkGet(c echo.Context) error {
@@ -32,7 +38,7 @@ func LinkGet(c echo.Context) error {
 		})
 	}
 
-	url, createdAt, err := database.LinkRead(alias)
+	url, createdAt, activationsLookup, activationsRedirect, err := database.LinkReadMetadata(alias)
 
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, LinkResponse{
@@ -57,6 +63,10 @@ func LinkGet(c echo.Context) error {
 			Link:      fmt.Sprintf("https://%s/to/%s", c.Request().Host, alias),
 			Alias:     alias,
 			CreatedAt: createdAt,
+			Activations: LinkResponseActivations{
+				Lookups:   activationsLookup,
+				Redirects: activationsRedirect,
+			},
 		},
 	})
 }
@@ -91,7 +101,7 @@ func LinkPost(c echo.Context) error {
 		})
 	}
 
-	url, createdAt, err := database.LinkWrite(url, alias)
+	url, createdAt, err := database.LinkCreateNew(url, alias)
 
 	if err != nil {
 		// This approach of determining if an HTTP-500 error
@@ -117,6 +127,10 @@ func LinkPost(c echo.Context) error {
 			Link:      fmt.Sprintf("https://%s/to/%s", c.Request().Host, alias),
 			Alias:     alias,
 			CreatedAt: createdAt,
+			Activations: LinkResponseActivations{
+				Lookups:   0,
+				Redirects: 0,
+			},
 		},
 	})
 }
