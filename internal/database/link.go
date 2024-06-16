@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"time"
 )
 
@@ -12,10 +13,10 @@ func parseTimestamp(unixTimestamp int64) string {
 func LinkRead(alias string) (string, string, error) {
 
 	var result UriLinkEntry
-	err := DB.Find(&result, UriLinkEntry{Alias: alias})
+	dbResponse := DB.Find(&result, UriLinkEntry{Alias: alias})
 
-	if err == nil {
-		return "", "", DB.Error
+	if dbResponse.Error != nil {
+		return "", "", errors.New(dbResponse.Error.Error())
 	}
 
 	createdAtStr := parseTimestamp(result.CreatedAt)
@@ -29,10 +30,10 @@ func LinkWrite(url string, alias string) (string, string, error) {
 		CreatedAt: 0,
 	}
 
-	result := DB.Create(&link)
+	dbResponse := DB.Create(&link)
 
-	if result.Error != nil {
-		return "", "", result.Error
+	if dbResponse.Error != nil {
+		return "", "", errors.New(dbResponse.Error.Error())
 	}
 
 	createdAtStr := parseTimestamp(link.CreatedAt)

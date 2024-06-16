@@ -26,17 +26,24 @@ func LinkGet(c echo.Context) error {
 	alias := c.Param("alias")
 
 	if alias == "" {
-		return c.JSON(http.StatusBadRequest, LinkResponse{
+		return echo.NewHTTPError(http.StatusBadRequest, LinkResponse{
 			Title:   "[Concierge] Alias Lookup",
-			Message: "Error. An 'alias' URL parameter must be provided.",
+			Message: "An 'alias' URL parameter must be provided.",
 		})
 	}
 
 	url, createdAt, err := database.LinkRead(alias)
 
-	if url == "" || err != nil {
-		errorMessage := fmt.Sprintf("Error. The provided 'alias' of '%s' does not exist.", alias)
-		return c.JSON(http.StatusNotFound, LinkResponse{
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, LinkResponse{
+			Title:   "[Concierge] Alias Lookup",
+			Message: "Internal Server Error",
+		})
+	}
+
+	if url == "" {
+		errorMessage := fmt.Sprintf("The provided alias of '%s' does not exist.", alias)
+		return echo.NewHTTPError(http.StatusNotFound, LinkResponse{
 			Title:   "[Concierge] Alias Lookup",
 			Message: errorMessage,
 		})
@@ -44,7 +51,7 @@ func LinkGet(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, LinkResponse{
 		Title:   "[Concierge] Alias Lookup",
-		Message: "Success. Returned information for the alias entry.",
+		Message: "Returned information for the alias entry.",
 		Metadata: &LinkResponseMetadata{
 			URL:       fmt.Sprintf("https://%s", url),
 			Link:      fmt.Sprintf("https://%s/to/%s", c.Request().Host, alias),
@@ -59,9 +66,9 @@ func LinkPost(c echo.Context) error {
 	alias := c.Param("alias")
 
 	if url == "" || alias == "" {
-		return c.JSON(http.StatusBadRequest, LinkResponse{
+		return echo.NewHTTPError(http.StatusBadRequest, LinkResponse{
 			Title:   "[Concierge] Alias Creation",
-			Message: "Error. Both 'url' and 'alias' parameters must be provided.",
+			Message: "Both 'url' and 'alias' parameters must be provided.",
 		})
 	}
 
@@ -70,32 +77,41 @@ func LinkPost(c echo.Context) error {
 	for _, value := range PROTOCOLS {
 		index := strings.Contains(url, value)
 		if index {
-			return c.JSON(http.StatusBadRequest, LinkResponse{
+			return echo.NewHTTPError(http.StatusBadRequest, LinkResponse{
 				Title:   "[Concierge] Alias Creation",
-				Message: "Error. The 'url' must not include a protocol (e.g. 'https://').",
+				Message: "The 'url' must not include a protocol (e.g. 'https://').",
 			})
 		}
 	}
 
 	if url[0:1] == "/" {
-		return c.JSON(http.StatusBadRequest, LinkResponse{
+		return echo.NewHTTPError(http.StatusBadRequest, LinkResponse{
 			Title:   "[Concierge] Alias Creation",
-			Message: "Error. The 'url' must start with a fully-qualified domain name.",
+			Message: "The 'url' must start with a fully-qualified domain name.",
 		})
 	}
 
-	_, createdAt, err := database.LinkWrite(url, alias)
+	url, createdAt, err := database.LinkWrite(url, alias)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, LinkResponse{
+		// This approach of determining if an HTTP-500 error
+		// has occurred is rather hacky. To be revisted later.
+		errorStartingText := err.Error()[0:26]
+		if errorStartingText == "ERROR: duplicate key value" {
+			return echo.NewHTTPError(http.StatusBadRequest, LinkResponse{
+				Title:   "[Concierge] Alias Creation",
+				Message: "The specified alias already exists.",
+			})
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, LinkResponse{
 			Title:   "[Concierge] Alias Creation",
-			Message: "Error. The specified 'alias' already exists.",
+			Message: "Internal Server Error",
 		})
 	}
 
 	return c.JSON(http.StatusCreated, LinkResponse{
 		Title:   "[Concierge] Alias Creation",
-		Message: "Success. A new alias entry has been created.",
+		Message: "A new alias entry has been created.",
 		Metadata: &LinkResponseMetadata{
 			URL:       fmt.Sprintf("https://%s", url),
 			Link:      fmt.Sprintf("https://%s/to/%s", c.Request().Host, alias),
